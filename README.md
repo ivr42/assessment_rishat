@@ -1,7 +1,7 @@
 # ООО Ришат. Тестовое задание для Python разработчика
 Оригинал тестового задания расположен по адресу: 
 
-https://docs.google.com/document/d/1RqJhk-pRDuAk4pH1uqbY9-8uwAqEXB9eRQWLSMM_9sI/
+<https://docs.google.com/document/d/1RqJhk-pRDuAk4pH1uqbY9-8uwAqEXB9eRQWLSMM_9sI/>
 
 ## Стек технологий, использованных в проекте
 - Docker
@@ -12,13 +12,21 @@ https://docs.google.com/document/d/1RqJhk-pRDuAk4pH1uqbY9-8uwAqEXB9eRQWLSMM_9sI/
 - Stripe 5.1.1
 
 ## Использование
-Образец сайта доступен по адресу <http://ivr.sytes.net:8080/>. Сайт наполнен 
-тестовыми данными.
+Образец сайта доступен по адресу <http://ivr.sytes.net:8080/>.
+Endpoint-ы:
+ - [item](http://ivr.sytes.net:8080/api/item/3/)
+ - [buy](http://ivr.sytes.net:8080/api/buy/3/)
 
- - Имя пользователя: djangoadmin
- - Пароль пользователя: ceiPiT8eiMisegie
+Сайт наполнен тестовыми данными.
 
 Интерфейс администратора расположен по адресу <http://ivr.sytes.net:8080/admin/>,
+<details>
+<summary>Учётные данные</summary>
+
+ - Имя пользователя: `djangoadmin`
+ - Пароль пользователя: `ceiPiT8eiMisegie`
+
+</details>
 
 ## Установка
 
