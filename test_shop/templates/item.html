@@ -1,0 +1,22 @@
+{% load rest_framework %}
+<html>
+  <head>
+    <title>Buy Item {{ item.id }}</title>
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+  <body>
+    <h1>{{ item.name }}</h1>
+    <p>{{ item.description }}</p>
+    <p>{{ item.price }}</p>
+    <button id="buy-button">Buy</button>
+    <script type="text/javascript">
+      var stripe = Stripe('{{ stripe_public_key }}');
+      var buyButton = document.getElementById('buy-button');
+      buyButton.addEventListener('click', function() {
+        fetch('/api/buy/{{ item.id }}/')
+        .then((response) => response.json())
+        .then(json => stripe.redirectToCheckout({ sessionId: json.session_id }))
+      });
+    </script>
+  </body>
+</html>
