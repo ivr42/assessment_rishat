@@ -2,7 +2,24 @@ from urllib.parse import urlparse
 
 import stripe
 from django.conf import settings
+from pydantic import BaseModel, PositiveInt
 from shop.models import Item
+
+
+class ProductData(BaseModel):
+    name: str
+    description: str
+
+
+class PriceData(BaseModel):
+    product_data: ProductData
+    currency: str
+    unit_amount_decimal: PositiveInt
+
+
+class ProductItem(BaseModel):
+    price_data: PriceData
+    quantity: PositiveInt
 
 
 def _make_static_uri(full_path: str, new_path: str) -> str:
@@ -23,41 +40,35 @@ def _make_static_uri(full_path: str, new_path: str) -> str:
     )
 
 
-def get_stripe_session(
-    endpoint: str, product: Item
-) -> stripe.checkout.Session:
+def stripe_session_fabric(obj: Item, endpoint: str) -> stripe.checkout.Session:
     """Initiate a stripe checkout session
 
     Args:
+        obj: an Item instance
         endpoint: full URI to endpoint, used to produce
             success and cancel pages URIs needed by stripe API.
-        product: an Item instance
 
     Returns:
         stripe checkout session
     """
     stripe.api_key = settings.STRIPE["STRIPE_SECRET_KEY"]
 
-    items = [
-        {
-            "price_data": {
-                "currency": settings.STRIPE["CURRENCY"],
-                "product_data": {
-                    "name": product.name,
-                    "description": product.description,
-                },
-                "unit_amount_decimal": int(product.price * 100),
-            },
-            "quantity": 1,
-        },
-    ]
+    product_obj = ProductItem(
+        price_data=PriceData(
+            product_data=ProductData(
+                name=obj.name,
+                description=obj.description,
+            ),
+            currency=settings.STRIPE["CURRENCY"],
+            unit_amount_decimal=obj.price * 100,
+        ),
+        quantity=1,
+    )
 
     stripe_session = stripe.checkout.Session.create(
-        line_items=items,
+        line_items=[product_obj.dict()],
         mode="payment",
-        success_url=_make_static_uri(
-            endpoint, settings.STRIPE["SUCCESS_PAGE"]
-        ),
+        success_url=_make_static_uri(endpoint, settings.STRIPE["SUCCESS_PAGE"]),
         cancel_url=endpoint,
     )
 
@@ -65,4 +76,4 @@ def get_stripe_session(
 
 
 def get_stripe_session_id(*args, **kwargs) -> str:
-    return get_stripe_session(*args, **kwargs).stripe_id
+    return stripe_session_fabric(*args, **kwargs).stripe_id

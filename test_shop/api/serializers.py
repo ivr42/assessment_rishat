@@ -32,6 +32,6 @@ class BuySerializer(serializers.ModelSerializer):
 
     def get_session_id(self, obj):
         return get_stripe_session_id(
-            reverse("api_item", str(obj.id), request=self.context["request"]),
             obj,
+            reverse("api_item", str(obj.id), request=self.context["request"]),
         )
